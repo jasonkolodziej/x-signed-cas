@@ -3,6 +3,8 @@ initCAdirs()
 {
 	umask 077
 	CA=$1
+	echo "Creating CA directory for CA = ${CA}"
+	echo
 	mkdir -p ${CA}
 	mkdir -p ${CA}/{certs,crl,newcerts,private}
 	echo 1000 > ${CA}/serial
@@ -12,6 +14,8 @@ initCAdirs()
 
 generateCAkey()
 {
+	echo "Creating CA Key for CA = ${CA}"
+	echo
 	CA=$1
 	MODLEN=$2
 	openssl genrsa -aes256 -out ${CA}/private/ca.key.pem ${MODLEN}
@@ -20,6 +24,8 @@ generateCAkey()
 selfSignCAcert()
 {
 	CA=$1
+	echo "Self Signing CA cert... CA = ${CA}"
+	echo
 	openssl req -config ${CA}-openssl.cnf \
 		-new -x509 -days 3650 -sha256 -extensions v3_ca \
 		-key ${CA}/private/ca.key.pem \
@@ -30,6 +36,9 @@ signIntermediaryCert()
 {
 	parentCA=$1
 	childCA=$2
+
+	echo "Signing Intermediate Cert parent CA = ${parentCA}; child CA = ${childCA}"
+	echo
 
 	# generate CSR for intermediary cert
 	openssl req -config ${childCA}-openssl.cnf \
